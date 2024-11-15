@@ -1,23 +1,16 @@
-// routes/artistRoutes.js
+// routes/productRoutes.js
 import express from 'express';
-
-import Product from '../models/Products.js';
-
+import { getProducts, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+router.route('/')
+  .get(getProducts)           // Obtener productos (público)
+  .post(protect, createProduct); // Crear producto (solo artista)
 
-
-router.get('/product'), async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-}
-
-
-
+router.route('/:id')
+  .put(protect, updateProduct)   // Actualizar producto (solo artista)
+  .delete(protect, deleteProduct); // Eliminar producto (solo artista)
 
 export default router;

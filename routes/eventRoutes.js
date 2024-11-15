@@ -1,28 +1,16 @@
-// routes/artistRoutes.js
+// routes/eventRoutes.js
 import express from 'express';
-
-import Event from '../models/Event.js';
+import { getEvents, createEvent, updateEvent, deleteEvent } from '../controllers/eventController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+router.route('/')
+  .get(getEvents)           // Obtener eventos (público)
+  .post(protect, createEvent); // Crear evento (solo artista)
 
-router.get('/event'), async (req, res) => {
-  try {
-    const events = await Event.find();
-    res.json(events);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-}
-
-router.post('/event'), async (req, res) => {
-  const event = new Event(req.body);
-  try {
-    const newEvent = await event.save();
-    res.status(201).json(newEvent);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-}
+router.route('/:id')
+  .put(protect, updateEvent)   // Actualizar evento (solo artista)
+  .delete(protect, deleteEvent); // Eliminar evento (solo artista)
 
 export default router;
